@@ -13,9 +13,9 @@
 - `src/synth/` — выбор редких классов, создание датасета кропов, генерация синтетики, обучение классификатора, ablation-таблица  
 - `runs/` — артефакты экспериментов (TensorBoard, checkpoints, метрики, графики, анализ ошибок, ablation)  
 - `examples_synth/` — небольшая выборка синтетических изображений для README (не весь датасет)
-- `tb/` - TensorBoard
-- `plots/loss_curves.png` - Loss plots
-- `metrics/val_metrics.json` - COCO metrics
+- `tb/` - TensorBoard + Trace профайлера
+- `plots/loss_curves.png` - График лосса
+- `metrics/val_metrics.json` - Валидационные метрики
 - `viz/` - Визуализации
 - `analysis/` - Error analysis 
 
@@ -170,6 +170,7 @@ python -m src.detr.error_analysis \
 ```
 
 Результаты находятся в папке analysis
+
 Интерпретация результатов:
 - cls_error: IoU ≥ 0.5, но неверный класс
 - loc_error: IoU < 0.5 (плохая локализация)
@@ -188,7 +189,6 @@ python -m src.detr.error_analysis \
 - **Baseline:** real-only (кропы из COCO-subset)
 - **+Synth:** real + синтетика (только для редких классов)
 
-Важно: количество классов в задаче не меняется (всё те же 10 классов), синтетика — это добавка к train-части для выбранных редких классов.
 
 ## 2) Выбор редких классов
 
