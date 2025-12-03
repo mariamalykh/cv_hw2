@@ -177,44 +177,97 @@ python -m src.detr.error_analysis \
 - false_pos: лишний бокс без GT-сопадения
 
 Разрыв между mAP50 (0.238) и mAP@[0.50:0.95] (0.109) указывает, что модель часто “примерно” находит объекты, но точность локализации на строгих IoU-порогах ещё ограничена.
-По размерам объектов качество выше на крупных объектах и хуже на small — типичное поведение для DETR при коротком fine-tuning.
+По размерам объектов качество выше на крупных объектах и хуже на мелких — типичное поведение для DETR при коротком fine-tuning.
 
-| split | mAP@[0.50:0.95] | mAP50 | AP75 |
-|---|---:|---:|---:|
-| val | 0.109 | 0.238 | 0.091 |
+# Задание 2.5
 
-### По размерам объектов (AP@[0.50:0.95])
-| area | AP |
+## 1) Идея
+
+Для редких классов генерируем дополнительные кропы объектов с помощью Stable Diffusion + ControlNet (Canny) и сравниваем обучение классификатора:
+
+- **Baseline:** real-only (кропы из COCO-subset)
+- **+Synth:** real + синтетика (только для редких классов)
+
+Важно: количество классов в задаче не меняется (всё те же 10 классов), синтетика — это добавка к train-части для выбранных редких классов.
+
+## 2) Выбор редких классов
+
+```bash
+python -m src.synth.pick_rare_classes --data_root data/coco_subset --split train --topk 3
+```
+### Редкие классы 
+| class | train crops (real) |
 |---|---:|
-| small | 0.032 |
-| medium | 0.097 |
-| large | 0.191 |
+| `fire hydrant` | `1865` |
+| `train` | `4571` |
+| `bus` | `6069` |
 
-### Recall (AR@[0.50:0.95])
-| maxDets | AR (all) | AR (small) | AR (medium) | AR (large) |
-|---:|---:|---:|---:|---:|
-| 1 | 0.131 | — | — | — |
-| 10 | 0.226 | — | — | — |
-| 100 | 0.261 | 0.068 | 0.241 | 0.441 |
+## 3) Датасет кропов
 
-> Примечание: AR по размерам доступен только для maxDets=100 (как в выводе COCOeval).
+```bash
+python -m src.synth.build_crop_dataset --data_root data/coco_subset --out_root data/crops_real --split train --min_area 1024
+python -m src.synth.build_crop_dataset --data_root data/coco_subset --out_root data/crops_real --split val --min_area 1024
+```
 
----
+## 4) Генерация синтетики (SD + ControlNet)
 
-## HW 2.5 — Таблица ablation (заполни своими числами)
+```bash
+python -m src.synth.generate_controlnet \
+  --real_root data/crops_real/train \
+  --out_root data/crops_synth/train \
+  --classes "fire hydrant" "train" "bus" \
+  --max_images_per_class 30 \
+  --num_per_image 1 \
+  --steps 12 \
+  --width 256 --height 256
+```
+
+Примеры синтетики: см. examples_synth
+
+## 5) Обучение классификатора (baseline vs +synth)
+
+Модель: vit_b_16
+
+Only real:
+```bash
+python -m src.synth.train_classifier \
+  --real_root data/crops_real \
+  --output_dir runs/ablation_real \
+  --arch vit_b_16 \
+  --epochs 10
+```
+
+Real + synth
+```bash
+python -m src.synth.train_classifier \
+  --real_root data/crops_real \
+  --synth_root data/crops_synth \
+  --output_dir runs/ablation_real_plus_synth \
+  --arch vit_b_16 \
+  --epochs 10
+```
+
+## 6) Ablation-таблица
+
+```bash
+python -m src.synth.ablation_table \
+  --runs runs/ablation_real runs/ablation_real_plus_synth \
+  --out_md runs/ablation_table.md
+```
 
 | эксперимент | synth_used | best_val_acc |
 |---|---:|---:|
-| real | false | `<ACC_REAL>` |
-| real + synth | true | `<ACC_REAL_SYNTH>` |
-| **Δ (real+synth − real)** |  | `(<ACC_REAL_SYNTH> - <ACC_REAL>)` |
+| real | false | 0.8784 |
+| real + synth | true | 0.8935 |
 
-### Редкие классы (пример шаблона)
-| class | train crops (real) | synth images |
-|---|---:|---:|
-| `<RARE_CLASS_1>` | `<N1>` | `<S1>` |
-| `<RARE_CLASS_2>` | `<N2>` | `<S2>` |
-| `<RARE_CLASS_3>` | `<N3>` | `<S3>` |
+
+## 7) Выводы
+Добавление синтетических примеров дало устойчивый прирост качества на валидации: accuracy выросла с 0.8784 до 0.8935, что подтверждает пользу синтетики как способа усилить представление редких классов и улучшить обобщающую способность модели. Итог: для данного датасета и выбранных классов синтетическая аугментация через SD+ControlNet оказалась эффективной и улучшила метрики по сравнению с baseline без синтетики.
+
+
+
+
+
 
 
 
