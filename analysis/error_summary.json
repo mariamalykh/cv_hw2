@@ -1,0 +1,97 @@
+{
+  "settings": {
+    "iou_thr": 0.5,
+    "score_thr": 0.3,
+    "max_images": 500
+  },
+  "totals": {
+    "gt": 2454,
+    "tp": 1591,
+    "fp": 6029,
+    "loc_error": 693,
+    "cls_error": 53,
+    "missed": 117
+  },
+  "per_class": {
+    "person": {
+      "gt": 1703,
+      "tp": 1199,
+      "missed": 69,
+      "cls_error": 2,
+      "loc_error": 433,
+      "fp": 4022
+    },
+    "bicycle": {
+      "gt": 56,
+      "tp": 25,
+      "missed": 2,
+      "cls_error": 6,
+      "loc_error": 23,
+      "fp": 174
+    },
+    "car": {
+      "gt": 295,
+      "tp": 147,
+      "missed": 18,
+      "cls_error": 12,
+      "loc_error": 118,
+      "fp": 698
+    },
+    "motorcycle": {
+      "gt": 70,
+      "tp": 40,
+      "missed": 2,
+      "cls_error": 3,
+      "loc_error": 25,
+      "fp": 169
+    },
+    "bus": {
+      "gt": 41,
+      "tp": 27,
+      "missed": 0,
+      "cls_error": 6,
+      "loc_error": 8,
+      "fp": 41
+    },
+    "train": {
+      "gt": 34,
+      "tp": 28,
+      "missed": 0,
+      "cls_error": 3,
+      "loc_error": 3,
+      "fp": 40
+    },
+    "truck": {
+      "gt": 88,
+      "tp": 40,
+      "missed": 7,
+      "cls_error": 18,
+      "loc_error": 23,
+      "fp": 234
+    },
+    "boat": {
+      "gt": 70,
+      "tp": 31,
+      "missed": 7,
+      "cls_error": 3,
+      "loc_error": 29,
+      "fp": 296
+    },
+    "traffic light": {
+      "gt": 68,
+      "tp": 29,
+      "missed": 10,
+      "cls_error": 0,
+      "loc_error": 29,
+      "fp": 327
+    },
+    "fire hydrant": {
+      "gt": 29,
+      "tp": 25,
+      "missed": 2,
+      "cls_error": 0,
+      "loc_error": 2,
+      "fp": 28
+    }
+  }
+}

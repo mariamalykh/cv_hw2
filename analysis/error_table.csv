@@ -1,0 +1,11 @@
+class,gt,tp,missed,cls_error,loc_error,fp
+person,1703,1199,69,2,433,4022
+bicycle,56,25,2,6,23,174
+car,295,147,18,12,118,698
+motorcycle,70,40,2,3,25,169
+bus,41,27,0,6,8,41
+train,34,28,0,3,3,40
+truck,88,40,7,18,23,234
+boat,70,31,7,3,29,296
+traffic light,68,29,10,0,29,327
+fire hydrant,29,25,2,0,2,28

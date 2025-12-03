@@ -1,0 +1,19 @@
+{
+  "best_val_acc": 0.8783609100310238,
+  "arch": "vit_b_16",
+  "epochs": 10,
+  "synth_used": false,
+  "num_classes": 10,
+  "classes": [
+    "bicycle",
+    "boat",
+    "bus",
+    "car",
+    "fire hydrant",
+    "motorcycle",
+    "person",
+    "traffic light",
+    "train",
+    "truck"
+  ]
+}
