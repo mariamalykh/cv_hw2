@@ -17,7 +17,7 @@
 - `plots/loss_curves.png` - График лосса
 - `metrics/val_metrics.json` - Валидационные метрики
 - `viz/` - Визуализации
-- `analysis/` - Error analysis 
+- `analysis/` - Анализ ошибок
 
 
 ---
